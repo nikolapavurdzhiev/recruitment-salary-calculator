@@ -1,52 +1,111 @@
-# Recruitment Salary Calculator
+# Recruitica Salary Calculator
 
-This is an interactive salary calculator for agency recruiters, built using [v0.dev](https://v0.dev) and deployed on [Vercel](https://vercel.com). It helps recruiters estimate their base salaries based on location, experience, performance, and other variables.
-
----
-
-## ✨ Features
-
-- Supports inputs like region, years of experience, specialization fit, and client book.
-- Estimates based on placements or billings in the last 12 months.
-- Dynamic UI generated with v0.
-- Automatically calculates based on real-time inputs.
-- No backend required – calculations handled client-side.
-- Session-based form persistence (via localStorage).
+A smarter way to estimate your base salary in tech recruitment.
 
 ---
 
-## 🌍 Supported Regions
+## 🚀 Getting Started
 
-- UK  
-- USA  
-- Dubai  
-- Amsterdam  
-- Australia  
-- Singapore  
-- Hong Kong  
+### 1. Install Dependencies
 
-> *More regions will be added soon.*
+```bash
+npm install
+# or
+yarn install
+```
+
+### 2. Set Up Environment Variables
+
+Create a `.env.local` file in the root directory with:
+
+```plaintext
+NOTION_API_KEY=your_notion_api_key
+NOTION_DATABASE_ID=your_notion_database_id
+```
+
+### 3. Run the Development Server
+
+```bash
+npm run dev
+# or
+yarn dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser to access the app.
+
+---
+
+## 📱 How It Works
+
+1. **Landing Page**: Enter your email to begin
+2. **Registration**: Fill in a short form if you're a first-time user
+3. **Calculator**: Input your role, location, experience, and more
+4. **Feedback**: Rate the accuracy of your results and leave suggestions
+
+---
+
+## 📊 Algorithm Behind the Scenes
+
+We use a multi-factor algorithm that takes into account:
+
+- Base salary bands by role and region
+- Experience level (logarithmic scaling)
+- Niche specialization and industry verticals
+- Performance data (billings or placements)
+- Client book status
+- Performance-based caps to avoid inflated outliers
 
 ---
 
 ## ⚠️ Disclaimer
 
-This calculator estimates **base salaries only** – commissions and bonuses are **not included**. Results may vary depending on multiple factors such as:
+This tool provides **base salary estimates only** — it does **not** include commissions or bonuses.
 
-- Company budgets  
-- Industry standards  
-- Internal leveling systems  
-- Cultural fit and values  
-- Performance reviews  
-- Economic conditions  
-- Team size and structure  
+Estimates can vary based on:
 
-Use this as a general guide and consult market data for final decisions.
+- Internal salary bands and budgets
+- Market dynamics and economic conditions
+- Team structure and responsibilities
+- Cultural alignment and soft skills
+- Individual negotiation
+
+Use this as a **guide**, not a final answer.
 
 ---
 
-## 🚀 How to Use
+## 🤝 Contributing
 
-1. Clone the repo:
+Contributions are welcome!
+
+1. Fork this repo
+2. Create a feature branch:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/recruitment-salary-calculator.git
+   git checkout -b feature/amazing-feature
+   ```
+3. Commit your changes:
+   ```bash
+   git commit -m "Add amazing feature"
+   ```
+4. Push your branch:
+   ```bash
+   git push origin feature/amazing-feature
+   ```
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+MIT License. See the `LICENSE` file for more info.
+
+---
+
+## 🙏 Thanks To
+
+- Recruitica 2025 Salary Guide
+- [shadcn/ui](https://ui.shadcn.com/) for UI components
+- [Lucide React](https://lucide.dev/) for icons
+
+---
+
+© 2025 Recruitica. All rights reserved.
