@@ -295,7 +295,26 @@ export default function BillingsCalculator() {
   const sectors = ["Tech", "Finance", "Legal", "Healthcare", "Construction", "Education", "Retail", "Other"]
 
   const handleChange = (field: string, value: string | number | boolean) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
+    // If changing role to Trainee Recruiter, reset other fields
+    if (field === "role" && value === "Trainee Recruiter") {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: value,
+        yearsOfExperience: "0",
+        sector: prev.sector, // Keep sector for reference
+        specializationFit: 1,
+        metricType: "placements",
+        annualPlacements: "",
+        annualBillings: "",
+        hasClients: false,
+      }))
+
+      // Clear any errors for fields that will be hidden
+      setFormErrors({})
+      setFormWarnings({})
+    } else {
+      setFormData((prev) => ({ ...prev, [field]: value }))
+    }
 
     // Clear error for this field if it exists
     if (formErrors[field]) {
@@ -329,16 +348,20 @@ export default function BillingsCalculator() {
 
     if (!formData.country) errors.country = "Please select a country"
     if (!formData.role) errors.role = "Please select a role"
-    if (!formData.yearsOfExperience) {
-      errors.yearsOfExperience = "Please enter years of experience"
-    } else if (Number(formData.yearsOfExperience) < 0) {
-      errors.yearsOfExperience = "Years of experience cannot be negative"
-    }
-    if (!formData.sector) errors.sector = "Please select a sector"
 
-    // Add validation for hasClients field
-    if (formData.hasClients === undefined) {
-      errors.hasClients = "Please specify if the candidate has a book of clients"
+    // Skip validation for other fields if Trainee Recruiter is selected
+    if (formData.role !== "Trainee Recruiter") {
+      if (!formData.yearsOfExperience) {
+        errors.yearsOfExperience = "Please enter years of experience"
+      } else if (Number(formData.yearsOfExperience) < 0) {
+        errors.yearsOfExperience = "Years of experience cannot be negative"
+      }
+      if (!formData.sector) errors.sector = "Please select a sector"
+
+      // Add validation for hasClients field
+      if (formData.hasClients === undefined) {
+        errors.hasClients = "Please specify if the candidate has a book of clients"
+      }
     }
 
     setFormErrors(errors)
@@ -364,15 +387,28 @@ export default function BillingsCalculator() {
         // Get salary range for selected country and role
         const { min, max, currency: currencySymbol } = salaryData[country][role]
 
-        // 1. Initial Base Salary
-        // Calculate experience factor (0-1 scale)
-        const experienceFactor = Math.min(Number(formData.yearsOfExperience) / 15, 1)
+        // Special case for Trainee Recruiters - return regional minimum directly
+        if (role === "Trainee Recruiter") {
+          setCalculatedSalary(min)
+          setCurrency(currencySymbol)
+          setIsCalculating(false)
+          return
+        }
 
-        // Calculate specialization factor (0-1 scale)
-        const specializationFactor = (Number(formData.specializationFit) - 1) / 4
+        // 1. Initial Base Salary
+        // Calculate experience factor using improved logarithmic scale (capped at 1.6 instead of 1.5)
+        const experienceFactor = Math.min(1 + Math.log(Number(formData.yearsOfExperience) / 10 + 1), 1.6)
+
+        // Calculate specialization factor with increased weight (20% instead of 15%)
+        let specializationFactor = ((Number(formData.specializationFit) - 1) / 4) * 0.2
+
+        // Apply additional multiplier for high-demand sectors
+        if (highDemandSectors.includes(formData.sector)) {
+          specializationFactor *= 1.2
+        }
 
         // Compute initial base salary
-        let initialBase = min + (max - min) * (experienceFactor * 0.4 + specializationFactor * 0.1)
+        let initialBase = min + (max - min) * (experienceFactor * 0.4 + specializationFactor)
 
         // If no billings provided, adjust initialBase
         if (formData.metricType === "billings" && Number(formData.annualBillings) === 0) {
@@ -383,25 +419,39 @@ export default function BillingsCalculator() {
         // Get threshold for the role
         const threshold = billingsThresholds[role]
 
-        // Calculate billings factor
+        // Calculate billings factor with increased impact and higher cap (1.15 instead of 1.1)
         let billingsFactor = 1.0
         if (formData.metricType === "billings" && Number(formData.annualBillings) > 0) {
-          billingsFactor = 1 + (Number(formData.annualBillings) / threshold) * 0.03
+          billingsFactor = 1 + (Number(formData.annualBillings) / threshold) * 0.05
 
-          // Cap and floor the billings factor
-          billingsFactor = Math.max(1.0, Math.min(billingsFactor, 1.03))
+          // Cap and floor the billings factor (increased to 1.15 from 1.1)
+          billingsFactor = Math.max(1.0, Math.min(billingsFactor, 1.15))
         }
 
         // 3. Final Base Salary
-        // Apply client book boost if applicable (currently not used in the algorithm)
-        const clientBookMultiplier = formData.hasClients ? 1.0 : 1.0 // Placeholder for future use
+        // Apply enhanced client book boost (tiered system)
+        let clientBookMultiplier = 1.0
+        if (formData.hasClients) {
+          // Higher multiplier if they have clients AND exceed billings threshold
+          if (formData.metricType === "billings" && Number(formData.annualBillings) > threshold) {
+            clientBookMultiplier = 1.1
+          } else {
+            clientBookMultiplier = 1.05
+          }
+        }
 
         // Compute final base salary
         let finalBase = initialBase * billingsFactor * 0.9 * clientBookMultiplier
 
-        // 4. Enforce Caps
-        // Ensure final base is within bounds
-        finalBase = Math.max(min * 0.8, Math.min(finalBase, max * 1.2))
+        // 4. Enforce Dynamic Caps
+        // Higher cap for exceptional performers
+        if (billingsFactor > 1.1) {
+          // Allow up to 130% of max for high performers
+          finalBase = Math.max(min * 0.8, Math.min(finalBase, max * 1.3))
+        } else {
+          // Standard cap (up to 120% of max)
+          finalBase = Math.max(min * 0.8, Math.min(finalBase, max * 1.2))
+        }
 
         // Round to nearest whole number
         setCalculatedSalary(Math.round(finalBase))
@@ -523,8 +573,8 @@ export default function BillingsCalculator() {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Years of Experience field */}
+                      {/* Years of Experience field - hide for Trainee Recruiters */}
+                      {formData.role !== "Trainee Recruiter" && (
                         <div className="space-y-2">
                           <div className="flex items-center mb-1">
                             <Label htmlFor="yearsOfExperience" className="mr-2">
@@ -562,8 +612,10 @@ export default function BillingsCalculator() {
                             </div>
                           )}
                         </div>
+                      )}
 
-                        {/* Sector Focus field */}
+                      {/* Sector Focus field - hide for Trainee Recruiters */}
+                      {formData.role !== "Trainee Recruiter" && (
                         <div className="space-y-2">
                           <Label htmlFor="sector">
                             Sector Focus <span className="text-red-500">*</span>
@@ -582,163 +634,194 @@ export default function BillingsCalculator() {
                           </Select>
                           {formErrors.sector && <p className="text-red-500 text-sm mt-1">{formErrors.sector}</p>}
                         </div>
-                      </div>
+                      )}
 
-                      {/* Has Clients Checkbox */}
-                      <div className="space-y-2">
-                        <div className="flex items-start space-x-2">
-                          <Checkbox
-                            id="hasClients"
-                            checked={formData.hasClients}
-                            onCheckedChange={(checked) => handleChange("hasClients", checked === true)}
-                            className={`${formErrors.hasClients ? "border-red-500" : ""} mt-1`}
-                          />
+                      {/* Has Clients Checkbox - hide for Trainee Recruiters */}
+                      {formData.role !== "Trainee Recruiter" && (
+                        <div className="space-y-2">
+                          <div className="flex items-start space-x-2">
+                            <Checkbox
+                              id="hasClients"
+                              checked={formData.hasClients}
+                              onCheckedChange={(checked) => handleChange("hasClients", checked === true)}
+                              className={`${formErrors.hasClients ? "border-red-500" : ""} mt-1`}
+                            />
+                            <div className="flex items-center">
+                              <Label htmlFor="hasClients" className="mr-2 text-sm">
+                                Has a Book of Clients? <span className="text-red-500">*</span>
+                              </Label>
+                              <div className="relative group">
+                                <Info className="h-4 w-4 text-gray-500 cursor-help" />
+                                <div className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-gray-800 text-white text-sm rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50">
+                                  <p>
+                                    Recruiters with an existing book of clients typically command higher base salaries
+                                    due to their established network and immediate revenue potential.
+                                  </p>
+                                  <div className="absolute left-0 top-full w-3 h-3 -mt-1 ml-1 transform rotate-45 bg-gray-800"></div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {formErrors.hasClients && (
+                            <p className="text-red-500 text-sm mt-1">{formErrors.hasClients}</p>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Skill Match section - hide for Trainee Recruiters */}
+                      {formData.role !== "Trainee Recruiter" && (
+                        <div className="space-y-4">
+                          <div>
+                            <div className="flex items-center mb-6">
+                              <Label htmlFor="specializationFit" className="block mr-2">
+                                Skill Match <span className="text-red-500">*</span>
+                              </Label>
+                              <div className="relative group">
+                                <Info className="h-4 w-4 text-gray-500 cursor-help" />
+                                <div className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-gray-800 text-white text-sm rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50">
+                                  <p>
+                                    Please rate your expertise in this field on a scale of 1 (novice) to 5 (expert). For
+                                    entry-level positions, a higher rating will give a small boost to your estimated
+                                    salary. For more experienced roles, a top score can noticeably increase your salary
+                                    estimate. If you work in a high-demand area like Tech or Finance, your expertise is
+                                    even more valuable and will further raise your estimate.
+                                  </p>
+                                  <div className="absolute left-0 top-full w-3 h-3 -mt-1 ml-1 transform rotate-45 bg-gray-800"></div>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="px-2">
+                              <Slider
+                                id="specializationFit"
+                                min={1}
+                                max={5}
+                                step={1}
+                                value={[formData.specializationFit]}
+                                onValueChange={(value) => handleChange("specializationFit", value[0])}
+                                className="my-6"
+                              />
+                              <div className="flex justify-between text-sm text-gray-500 mt-1">
+                                <span>Low fit (1)</span>
+                                <span className="text-center">Neutral fit (3)</span>
+                                <span>Perfect fit (5)</span>
+                              </div>
+                              <div className="text-center mt-4">
+                                <span className="font-medium">
+                                  Selected: {formData.specializationFit}
+                                  {formData.specializationFit === 1 && " (Low)"}
+                                  {formData.specializationFit === 2 && " (Below Average)"}
+                                  {formData.specializationFit === 3 && " (Neutral)"}
+                                  {formData.specializationFit === 4 && " (Good)"}
+                                  {formData.specializationFit === 5 && " (Perfect)"}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Optional metrics section - hide for Trainee Recruiters */}
+                      {formData.role !== "Trainee Recruiter" && (
+                        <div className="space-y-4 pt-2 border-t border-gray-100">
                           <div className="flex items-center">
-                            <Label htmlFor="hasClients" className="mr-2 text-sm">
-                              Has a Book of Clients? <span className="text-red-500">*</span>
+                            <Label className="block mr-2">
+                              Please select the metric you want to report based on your performance in the last 12
+                              months:
                             </Label>
                             <div className="relative group">
                               <Info className="h-4 w-4 text-gray-500 cursor-help" />
                               <div className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-gray-800 text-white text-sm rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50">
                                 <p>
-                                  Recruiters with an existing book of clients typically command higher base salaries due
-                                  to their established network and immediate revenue potential.
+                                  Enter the actual numbers from the last 12 months. Using historical data provides more
+                                  objective and reliable figures for salary estimates.
                                 </p>
                                 <div className="absolute left-0 top-full w-3 h-3 -mt-1 ml-1 transform rotate-45 bg-gray-800"></div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                        {formErrors.hasClients && <p className="text-red-500 text-sm mt-1">{formErrors.hasClients}</p>}
-                      </div>
 
-                      {/* Skill Match section */}
-                      <div className="space-y-4">
-                        <div>
-                          <div className="flex items-center mb-6">
-                            <Label htmlFor="specializationFit" className="block mr-2">
-                              Skill Match <span className="text-red-500">*</span>
-                            </Label>
-                            <div className="relative group">
-                              <Info className="h-4 w-4 text-gray-500 cursor-help" />
-                              <div className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-gray-800 text-white text-sm rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50">
-                                <p>
-                                  Rate your level of expertise in this sector from 1 (low) to 5 (high). For entry-level
-                                  roles, this adds up to a 2.5% boost; for others, up to 5%.
-                                </p>
-                                <div className="absolute left-0 top-full w-3 h-3 -mt-1 ml-1 transform rotate-45 bg-gray-800"></div>
+                          <RadioGroup
+                            value={formData.metricType}
+                            onValueChange={(value) => handleChange("metricType", value)}
+                            className="flex space-x-4"
+                          >
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="placements" id="placements" />
+                              <Label htmlFor="placements">Number of Placements Made in the Last 12 Months</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="billings" id="billings" />
+                              <Label htmlFor="billings">Total Billings in the Last 12 Months</Label>
+                            </div>
+                          </RadioGroup>
+
+                          {formData.metricType === "placements" ? (
+                            <div className="space-y-2">
+                              <Label htmlFor="annualPlacements">Number of Placements Made in the Last 12 Months</Label>
+                              <Input
+                                id="annualPlacements"
+                                type="number"
+                                min="0"
+                                placeholder="e.g. 8"
+                                value={formData.annualPlacements}
+                                onChange={(e) => handleChange("annualPlacements", e.target.value)}
+                              />
+                            </div>
+                          ) : (
+                            <div className="space-y-2">
+                              <Label htmlFor="annualBillings">Total Billings in the Last 12 Months</Label>
+                              <div className="grid grid-cols-3 gap-2">
+                                <div className="col-span-1">
+                                  <Select
+                                    value={formData.billingsCurrency}
+                                    onValueChange={(value) => handleChange("billingsCurrency", value)}
+                                  >
+                                    <SelectTrigger id="billingsCurrency">
+                                      <SelectValue placeholder="Currency" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {currencyOptions.map((currency) => (
+                                        <SelectItem key={currency.value} value={currency.value}>
+                                          {currency.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                <div className="col-span-2">
+                                  <Input
+                                    id="annualBillings"
+                                    type="number"
+                                    min="0"
+                                    placeholder="e.g. 150000"
+                                    value={formData.annualBillings}
+                                    onChange={(e) => handleChange("annualBillings", e.target.value)}
+                                  />
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <div className="px-2">
-                            <Slider
-                              id="specializationFit"
-                              min={1}
-                              max={5}
-                              step={1}
-                              value={[formData.specializationFit]}
-                              onValueChange={(value) => handleChange("specializationFit", value[0])}
-                              className="my-6"
-                            />
-                            <div className="flex justify-between text-sm text-gray-500 mt-1">
-                              <span>Low fit (1)</span>
-                              <span className="text-center">Neutral fit (3)</span>
-                              <span>Perfect fit (5)</span>
-                            </div>
-                            <div className="text-center mt-4">
-                              <span className="font-medium">
-                                Selected: {formData.specializationFit}
-                                {formData.specializationFit === 1 && " (Low)"}
-                                {formData.specializationFit === 2 && " (Below Average)"}
-                                {formData.specializationFit === 3 && " (Neutral)"}
-                                {formData.specializationFit === 4 && " (Good)"}
-                                {formData.specializationFit === 5 && " (Perfect)"}
-                              </span>
-                            </div>
-                          </div>
+                          )}
                         </div>
-                      </div>
+                      )}
 
-                      {/* Optional metrics section */}
-                      <div className="space-y-4 pt-2 border-t border-gray-100">
-                        <div className="flex items-center">
-                          <Label className="block mr-2">
-                            Please select the metric you want to report based on your performance in the last 12 months:
-                          </Label>
-                          <div className="relative group">
-                            <Info className="h-4 w-4 text-gray-500 cursor-help" />
-                            <div className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-gray-800 text-white text-sm rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50">
-                              <p>
-                                Enter the actual numbers from the last 12 months. Using historical data provides more
-                                objective and reliable figures for salary estimates.
-                              </p>
-                              <div className="absolute left-0 top-full w-3 h-3 -mt-1 ml-1 transform rotate-45 bg-gray-800"></div>
-                            </div>
-                          </div>
+                      {/* Trainee Recruiter Note */}
+                      {formData.role === "Trainee Recruiter" && (
+                        <div className="mt-4 p-4 bg-blue-50 rounded-md text-blue-800 border border-blue-200">
+                          <p className="font-medium mb-2">Trainee Recruiter Information:</p>
+                          <p>
+                            Trainee Recruiters are assigned the regional minimum salary based on the selected region.
+                          </p>
+                          <p className="mt-2">No additional criteria are required for this role.</p>
+                          {formData.country && (
+                            <p className="mt-2 font-medium">
+                              Minimum salary for Trainee Recruiters in {formData.country}:
+                              {formData.country && salaryData[formData.country as keyof typeof salaryData]
+                                ? ` ${salaryData[formData.country as keyof typeof salaryData]["Trainee Recruiter"].currency}${salaryData[formData.country as keyof typeof salaryData]["Trainee Recruiter"].min.toLocaleString()}`
+                                : " (Please select a region)"}
+                            </p>
+                          )}
                         </div>
-
-                        <RadioGroup
-                          value={formData.metricType}
-                          onValueChange={(value) => handleChange("metricType", value)}
-                          className="flex space-x-4"
-                        >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="placements" id="placements" />
-                            <Label htmlFor="placements">Number of Placements Made in the Last 12 Months</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="billings" id="billings" />
-                            <Label htmlFor="billings">Total Billings in the Last 12 Months</Label>
-                          </div>
-                        </RadioGroup>
-
-                        {formData.metricType === "placements" ? (
-                          <div className="space-y-2">
-                            <Label htmlFor="annualPlacements">Number of Placements Made in the Last 12 Months</Label>
-                            <Input
-                              id="annualPlacements"
-                              type="number"
-                              min="0"
-                              placeholder="e.g. 8"
-                              value={formData.annualPlacements}
-                              onChange={(e) => handleChange("annualPlacements", e.target.value)}
-                            />
-                          </div>
-                        ) : (
-                          <div className="space-y-2">
-                            <Label htmlFor="annualBillings">Total Billings in the Last 12 Months</Label>
-                            <div className="grid grid-cols-3 gap-2">
-                              <div className="col-span-1">
-                                <Select
-                                  value={formData.billingsCurrency}
-                                  onValueChange={(value) => handleChange("billingsCurrency", value)}
-                                >
-                                  <SelectTrigger id="billingsCurrency">
-                                    <SelectValue placeholder="Currency" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {currencyOptions.map((currency) => (
-                                      <SelectItem key={currency.value} value={currency.value}>
-                                        {currency.label}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                              <div className="col-span-2">
-                                <Input
-                                  id="annualBillings"
-                                  type="number"
-                                  min="0"
-                                  placeholder="e.g. 150000"
-                                  value={formData.annualBillings}
-                                  onChange={(e) => handleChange("annualBillings", e.target.value)}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
+                      )}
 
                       <Button
                         type="button"
@@ -760,7 +843,7 @@ export default function BillingsCalculator() {
 
                     {calculatedSalary !== null ? (
                       <div className="text-center py-6">
-                        <div className="text-3xl md:text-5xl font-bold text-blue-600 mb-2">
+                        <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-blue-600 mb-2 break-words overflow-hidden">
                           {formatCurrency(calculatedSalary, currency)}
                         </div>
                         <p className="text-gray-500 text-sm">Estimated annual base salary</p>
@@ -802,6 +885,7 @@ export default function BillingsCalculator() {
                                         email: userEmail,
                                         estimateFeedback: "positive",
                                         extraFeedback: extraFeedback.trim() || undefined,
+                                        salaryOutput: formatCurrency(calculatedSalary, currency), // Add the formatted salary
                                       }),
                                     })
 
@@ -864,6 +948,7 @@ export default function BillingsCalculator() {
                                         email: userEmail,
                                         estimateFeedback: "negative",
                                         extraFeedback: extraFeedback.trim() || undefined,
+                                        salaryOutput: formatCurrency(calculatedSalary, currency), // Add the formatted salary
                                       }),
                                     })
 
@@ -944,6 +1029,7 @@ export default function BillingsCalculator() {
                                           email: userEmail,
                                           estimateFeedback: feedbackType,
                                           extraFeedback: extraFeedback.trim(),
+                                          salaryOutput: formatCurrency(calculatedSalary, currency), // Add the formatted salary
                                         }),
                                       })
 

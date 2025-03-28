@@ -9,7 +9,7 @@ export function Navigation() {
   // Get the current pathname once
   const pathname = usePathname()
 
-  // Determine active state for Home button
+  // Determine active state for home button
   const isHomeActive = pathname === "/landing"
 
   return (

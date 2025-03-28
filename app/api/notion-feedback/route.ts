@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 
 export async function POST(request: Request) {
   try {
-    const { email, estimateFeedback, extraFeedback } = await request.json()
+    const { email, estimateFeedback, extraFeedback, salaryOutput } = await request.json()
 
     if (!email || !estimateFeedback) {
       console.error("Missing required fields:", { email, estimateFeedback })
@@ -12,6 +12,7 @@ export async function POST(request: Request) {
     console.log("Processing feedback for email:", email)
     console.log("Feedback type:", estimateFeedback)
     if (extraFeedback) console.log("Extra feedback provided:", extraFeedback)
+    if (salaryOutput) console.log("Salary output provided:", salaryOutput)
 
     // First, query the Notion database to find the record with the matching email
     console.log("Querying Notion database for email:", email)
@@ -67,6 +68,19 @@ export async function POST(request: Request) {
           {
             text: {
               content: extraFeedback,
+            },
+          },
+        ],
+      }
+    }
+
+    // Add salary output if provided
+    if (salaryOutput) {
+      properties["Salary Output"] = {
+        rich_text: [
+          {
+            text: {
+              content: salaryOutput,
             },
           },
         ],
