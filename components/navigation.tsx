@@ -14,7 +14,7 @@ export function Navigation() {
 
   return (
     <div className="flex items-center space-x-2">
-      <Link href="/landing" passHref>
+      <Link href="https://recruitica.io/" target="_blank" rel="noopener noreferrer" passHref>
         <Button
           variant="default"
           size="sm"

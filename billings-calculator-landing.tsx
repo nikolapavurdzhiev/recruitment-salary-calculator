@@ -88,7 +88,7 @@ export default function BillingsCalculatorLanding() {
     <div className="flex flex-col min-h-screen bg-white">
       <header className="border-b border-gray-100">
         <div className="container mx-auto py-4 px-4 md:px-6 flex justify-between items-center">
-          <Link href="/landing">
+          <Link href="https://recruitica.io/" target="_blank" rel="noopener noreferrer">
             <Image
               src="/images/recruitica-logo.png"
               alt="Recruitica Logo"
