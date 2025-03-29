@@ -487,8 +487,8 @@ export default function BillingsCalculator() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      <header className="border-b border-gray-100">
-        <div className="container mx-auto py-4 px-4 md:px-6 flex justify-between items-center">
+      <header className="border-b border-gray-100 sticky top-0 bg-white z-10">
+        <div className="container mx-auto py-3 px-4 md:px-6 flex justify-between items-center">
           <Link href="https://recruitica.io/" target="_blank" rel="noopener noreferrer">
             <Image
               src="/images/recruitica-logo.png"
@@ -516,21 +516,21 @@ export default function BillingsCalculator() {
         </div>
       </header>
 
-      <main className="flex-1 py-8 md:py-12">
+      <main className="flex-1 py-6 md:py-8">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="max-w-4xl mx-auto">
-            <div className="mb-8 text-center">
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Recruitment Salary Calculator</h1>
-              <p className="text-gray-600 max-w-2xl mx-auto">
+          <div className="max-w-6xl mx-auto">
+            <div className="mb-6 text-center">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Recruitment Salary Calculator</h1>
+              <p className="text-gray-600 max-w-2xl mx-auto text-sm md:text-base">
                 Estimate your base salary as an agency recruiter based on the Recruitica 2025 Salary Guide.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="md:col-span-2">
-                <Card>
-                  <CardContent className="pt-6">
-                    <form className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2">
+                <Card className="h-full">
+                  <CardContent className="pt-5">
+                    <form className="space-y-5">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Region field */}
                         <div className="space-y-2">
@@ -837,21 +837,21 @@ export default function BillingsCalculator() {
               </div>
 
               <div>
-                <Card>
-                  <CardContent className="pt-6">
+                <Card className="h-full">
+                  <CardContent className="pt-5">
                     <h2 className="text-xl font-semibold mb-4">Estimated Base Salary</h2>
 
                     {calculatedSalary !== null ? (
-                      <div className="text-center py-6">
-                        <div className="text-3xl md:text-4xl lg:text-5xl font-bold text-blue-600 mb-2 break-words overflow-hidden">
+                      <div className="text-center py-4">
+                        <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-blue-600 mb-2 whitespace-nowrap text-ellipsis max-w-full">
                           {formatCurrency(calculatedSalary, currency)}
                         </div>
                         <p className="text-gray-500 text-sm">Estimated annual base salary</p>
 
                         {/* Feedback Section */}
                         {!feedbackSubmitted ? (
-                          <div className="mt-6 pt-6 border-t border-gray-200">
-                            <h3 className="text-lg font-medium mb-3">Was this estimate accurate?</h3>
+                          <div className="mt-4 pt-4 border-t border-gray-200">
+                            <h3 className="text-base font-medium mb-2">Was this estimate accurate?</h3>
 
                             <div className="flex justify-center gap-4 mb-4">
                               <Button
@@ -1073,7 +1073,7 @@ export default function BillingsCalculator() {
                             )}
                           </div>
                         ) : (
-                          <div className="mt-6 pt-6 border-t border-gray-200 text-center">
+                          <div className="mt-4 pt-4 border-t border-gray-200 text-center">
                             <div className="text-green-600 mb-2">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -1096,8 +1096,8 @@ export default function BillingsCalculator() {
                         )}
                       </div>
                     ) : (
-                      <div className="text-center py-6 text-gray-500">
-                        <div className="text-3xl md:text-5xl font-bold text-gray-300 mb-2">—</div>
+                      <div className="text-center py-4 text-gray-500">
+                        <div className="text-2xl md:text-4xl font-bold text-gray-300 mb-2">—</div>
                         <p className="text-gray-500 text-sm">
                           Fill out the form and click "Calculate" to see your estimated base salary.
                         </p>
@@ -1111,30 +1111,31 @@ export default function BillingsCalculator() {
                         specialization, performance, and client book. Recruiters with existing clients or in high-demand
                         sectors typically earn higher total compensation once commissions and bonuses are considered.
                       </p>
+
+                      <div className="border-t border-gray-200 mt-3 pt-3">
+                        <p className="font-medium mb-1">Disclaimer:</p>
+                        <p>
+                          This calculator is currently optimized for the UK, USA, Dubai, Amsterdam, Australia,
+                          Singapore, and Hong Kong. It estimates base salaries only – commissions and bonuses are not
+                          included.
+                        </p>
+                        <p className="mt-2">
+                          Please note: Salaries may vary depending on company size, budget, internal salary bands, team
+                          structure, culture fit, individual negotiation, and market timing. These estimates serve as a
+                          general guide and should not be treated as guaranteed offers.
+                        </p>
+                        <p className="mt-2">More regions will be supported soon.</p>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
-
-                <div className="mt-6 bg-blue-50 p-4 rounded-md text-sm text-blue-800">
-                  <p className="font-medium mb-2">Disclaimer:</p>
-                  <p>
-                    This calculator is currently optimized for the UK, USA, Dubai, Amsterdam, Australia, Singapore, and
-                    Hong Kong. It estimates base salaries only – commissions and bonuses are not included.
-                  </p>
-                  <p className="mt-2">
-                    Please note: Salaries may vary depending on company size, budget, internal salary bands, team
-                    structure, culture fit, individual negotiation, and market timing. These estimates serve as a
-                    general guide and should not be treated as guaranteed offers.
-                  </p>
-                  <p className="mt-2">More regions will be supported soon.</p>
-                </div>
               </div>
             </div>
           </div>
         </div>
       </main>
 
-      <footer className="border-t border-gray-100 py-6 mt-12">
+      <footer className="border-t border-gray-100 py-4 mt-6">
         <div className="container mx-auto px-4 md:px-6 text-center text-gray-500 text-sm">
           <p>© {new Date().getFullYear()} Recruitica. All rights reserved.</p>
           <p className="mt-1">Data sourced from the Recruitica 2025 Salary Guide.</p>
