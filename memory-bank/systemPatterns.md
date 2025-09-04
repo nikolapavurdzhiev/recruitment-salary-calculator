@@ -1,4 +1,4 @@
-# System Patterns: Recruitica Salary Calculator
+# System Patterns: Recruitment Salary Calculator
 
 ## Architecture Overview
 - **Framework**: Next.js 15 with App Router

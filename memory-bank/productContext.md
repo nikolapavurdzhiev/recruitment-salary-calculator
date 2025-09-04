@@ -1,4 +1,4 @@
-# Product Context: Recruitica Salary Calculator
+# Product Context: Recruitment Salary Calculator
 
 ## Why This Project Exists
 The recruitment industry lacks accessible, data-driven salary estimation tools. Recruiters often rely on outdated information or guesswork when determining appropriate salary ranges for candidates.

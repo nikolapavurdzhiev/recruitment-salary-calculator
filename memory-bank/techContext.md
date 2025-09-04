@@ -1,4 +1,4 @@
-# Tech Context: Recruitica Salary Calculator
+# Tech Context: Recruitment Salary Calculator
 
 ## Technology Stack
 

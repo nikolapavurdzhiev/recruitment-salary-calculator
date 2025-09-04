@@ -1,8 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -335,28 +333,13 @@ export default function BillingsCalculator() {
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      <header className="border-b border-gray-100 sticky top-0 bg-white z-10">
-        <div className="container mx-auto py-3 px-4 md:px-6 flex justify-between items-center">
-          <Link href="https://recruitica.io/" target="_blank" rel="noopener noreferrer">
-            <Image
-              src="/images/recruitica-logo.png"
-              alt="Recruitica Logo"
-              width={195}
-              height={46}
-              className="h-12 w-auto cursor-pointer"
-              priority
-            />
-          </Link>
-        </div>
-      </header>
-
       <main className="flex-1 py-6 md:py-8">
         <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-6xl mx-auto">
             <div className="mb-6 text-center">
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Recruitment Salary Calculator</h1>
               <p className="text-gray-600 max-w-2xl mx-auto text-sm md:text-base">
-                Estimate your base salary as an agency recruiter based on the Recruitica 2025 Salary Guide.
+                Estimate your base salary as an agency recruiter based on market data.
               </p>
             </div>
 
@@ -724,8 +707,8 @@ export default function BillingsCalculator() {
 
       <footer className="border-t border-gray-100 py-4 mt-6">
         <div className="container mx-auto px-4 md:px-6 text-center text-gray-500 text-sm">
-          <p>© {new Date().getFullYear()} Recruitica. All rights reserved.</p>
-          <p className="mt-1">Data sourced from the Recruitica 2025 Salary Guide.</p>
+          <p>© {new Date().getFullYear()} Recruitment Salary Calculator. All rights reserved.</p>
+          <p className="mt-1">Data sourced from market research and industry standards.</p>
         </div>
       </footer>
     </div>

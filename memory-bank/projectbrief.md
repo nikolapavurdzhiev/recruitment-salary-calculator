@@ -1,4 +1,4 @@
-# Project Brief: Recruitica Salary Calculator
+# Project Brief: Recruitment Salary Calculator
 
 ## Project Overview
 A modern, streamlined salary calculator for tech recruitment professionals built with Next.js 15, React 19, TypeScript, and Tailwind CSS.
@@ -16,7 +16,7 @@ A modern, streamlined salary calculator for tech recruitment professionals built
 
 ## Success Criteria
 - Fast loading times (< 3s initial load)
-- Accurate salary estimates based on Recruitica 2025 Salary Guide
+- Accurate salary estimates based on market data
 - Mobile-responsive design
 - Type-safe implementation
 - Clean, maintainable codebase

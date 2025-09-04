@@ -1,7 +1,7 @@
 # Tech Stack Documentation & Best Practices
 
 ## Overview
-This document contains research findings and best practices for the current tech stack used in the Recruitica Salary Calculator project.
+This document contains research findings and best practices for the current tech stack used in the Recruitment Salary Calculator project.
 
 ## Tech Stack Components
 
