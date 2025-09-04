@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
 
 export default function Home() {
-  // Redirect to the landing page
-  redirect("/landing")
+  // Redirect directly to the calculator
+  redirect("/billings-calculator")
 }
 

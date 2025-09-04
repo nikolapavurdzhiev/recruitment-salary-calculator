@@ -1,7 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useSearchParams, useRouter } from "next/navigation"
+import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -10,12 +9,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
-import { Info, AlertCircle, ThumbsUp, ThumbsDown, Send } from "lucide-react"
+import { Info, AlertCircle } from "lucide-react"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Textarea } from "@/components/ui/textarea"
-import { toast } from "@/components/ui/use-toast"
-import { Navigation } from "./components/navigation"
 
 // Salary data from the Recruitica 2025 Salary Guide
 const salaryData = {
@@ -103,29 +99,6 @@ const billingsThresholds = {
   Director: 1000000,
 }
 
-// Benchmark billings in AED for each role
-const benchmarkBillings = {
-  "Trainee Recruiter": 200000,
-  "180 Recruiter": 300000,
-  "Account Manager": 400000,
-  "360 Senior/Principal Recruiter": 500000,
-  "Business Development Manager": 600000,
-  "Team Leader": 700000,
-  Manager: 800000,
-  Director: 1000000,
-}
-
-// Exchange rates for converting to AED
-const exchangeRates = {
-  "United Kingdom": 0.207, // 1 AED ≈ 0.207 GBP
-  "United States": 0.272, // 1 AED ≈ 0.272 USD
-  Dubai: 1, // Already in AED
-  Amsterdam: 0.25, // Approximate EUR to AED
-  Australia: 0.4, // Approximate AUD to AED
-  Singapore: 0.36, // Approximate SGD to AED
-  "Hong Kong": 0.035, // Approximate HKD to AED
-}
-
 // High-demand sectors that get a multiplier
 const highDemandSectors = ["Tech", "Finance"]
 
@@ -155,25 +128,7 @@ const currencyOptions = [
   { value: "HKD", label: "HKD (HK$)" },
 ]
 
-// Map sector names from registration form to calculator sectors
-const sectorMapping: Record<string, string> = {
-  Technology: "Tech",
-  Tech: "Tech",
-  Finance: "Finance",
-  Finance: "Finance",
-  Legal: "Legal",
-  Healthcare: "Healthcare",
-  Construction: "Construction",
-  Education: "Education",
-  Retail: "Retail",
-  Other: "Other",
-  // Add any other mappings that might be needed
-}
-
 export default function BillingsCalculator() {
-  const searchParams = useSearchParams()
-  const router = useRouter()
-
   const [formData, setFormData] = useState({
     country: "",
     role: "",
@@ -192,92 +147,6 @@ export default function BillingsCalculator() {
   const [isCalculating, setIsCalculating] = useState(false)
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
   const [formWarnings, setFormWarnings] = useState<Record<string, string>>({})
-
-  // Feedback state
-  const [feedbackType, setFeedbackType] = useState<"positive" | "negative" | null>(null)
-  const [extraFeedback, setExtraFeedback] = useState("")
-  const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false)
-  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false)
-  const [userEmail, setUserEmail] = useState<string | null>(null)
-
-  // Initialize form data from URL parameters
-  useEffect(() => {
-    const role = searchParams.get("role")
-    const sector = searchParams.get("sector")
-    const region = searchParams.get("region")
-    const email = searchParams.get("email")
-
-    console.log("URL Parameters:", {
-      role,
-      sector,
-      region,
-      email,
-      fullUrl: typeof window !== "undefined" ? window.location.href : "",
-      searchParams: typeof window !== "undefined" ? window.location.search : "",
-    })
-
-    // Set the email from URL parameter
-    if (email) {
-      setUserEmail(email)
-      // Also store in localStorage if not already there
-      if (!localStorage.getItem("recruitica_user_email")) {
-        localStorage.setItem("recruitica_user_email", email)
-      }
-      console.log("Email found in URL parameters:", email)
-    } else {
-      // Fallback: try to get email from the full URL
-      if (typeof window !== "undefined") {
-        const urlParams = new URLSearchParams(window.location.search)
-        const emailFromUrl = urlParams.get("email")
-        if (emailFromUrl) {
-          setUserEmail(emailFromUrl)
-          // Also store in localStorage if not already there
-          if (!localStorage.getItem("recruitica_user_email")) {
-            localStorage.setItem("recruitica_user_email", emailFromUrl)
-          }
-          console.log("Email found in window.location.search:", emailFromUrl)
-        } else {
-          // Final fallback: check localStorage
-          const storedEmail = localStorage.getItem("recruitica_user_email")
-          if (storedEmail) {
-            setUserEmail(storedEmail)
-            console.log("Email found in localStorage:", storedEmail)
-          }
-        }
-      }
-    }
-
-    if (role || sector || region) {
-      setFormData((prevData) => {
-        const updatedData = { ...prevData }
-
-        if (role && roles.includes(role)) {
-          updatedData.role = role
-        }
-
-        if (sector) {
-          // Handle multiple sectors (comma-separated)
-          const sectorList = sector.split(",")
-          if (sectorList.length > 0) {
-            // Map the first sector from registration form to calculator format
-            const firstSector = sectorList[0]
-            const mappedSector = sectorMapping[firstSector] || firstSector
-            if (sectors.includes(mappedSector)) {
-              updatedData.sector = mappedSector
-            }
-          }
-        }
-
-        if (region && Object.keys(salaryData).includes(region)) {
-          updatedData.country = region
-        }
-
-        return updatedData
-      })
-    }
-    // Only run this effect once when the component mounts
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   // Available options for dropdowns
   const countries = Object.keys(salaryData)
@@ -373,11 +242,6 @@ export default function BillingsCalculator() {
 
     setIsCalculating(true)
 
-    // Reset feedback state when recalculating
-    setFeedbackType(null)
-    setExtraFeedback("")
-    setFeedbackSubmitted(false)
-
     // Simulate calculation delay for better UX
     setTimeout(() => {
       try {
@@ -465,22 +329,6 @@ export default function BillingsCalculator() {
     }, 800)
   }
 
-  const handleLogout = () => {
-    // Clear stored email from localStorage
-    localStorage.removeItem("recruitica_user_email")
-    // Clear user email from state
-    setUserEmail(null)
-    // Show toast notification
-    toast({
-      title: "Logged out successfully",
-      description: "You've been logged out. You'll need to sign in again next time.",
-    })
-    // Redirect to landing page
-    router.push("/landing")
-  }
-
-  // This function is no longer needed as we're handling feedback directly in the button clicks
-
   const formatCurrency = (value: number, currencySymbol: string) => {
     return `${currencySymbol}${value.toLocaleString()}`
   }
@@ -499,20 +347,6 @@ export default function BillingsCalculator() {
               priority
             />
           </Link>
-          <div className="flex items-center gap-4">
-            {userEmail && (
-              <div className="hidden md:flex items-center mr-4">
-                <span className="text-sm text-gray-600 mr-2">Signed in as:</span>
-                <span className="text-sm font-medium">{userEmail}</span>
-              </div>
-            )}
-            <Navigation />
-            {userEmail && (
-              <Button variant="outline" size="sm" onClick={handleLogout} className="ml-2 text-gray-600 border-gray-300">
-                Logout
-              </Button>
-            )}
-          </div>
         </div>
       </header>
 
@@ -847,253 +681,6 @@ export default function BillingsCalculator() {
                           {formatCurrency(calculatedSalary, currency)}
                         </div>
                         <p className="text-gray-500 text-sm">Estimated annual base salary</p>
-
-                        {/* Feedback Section */}
-                        {!feedbackSubmitted ? (
-                          <div className="mt-4 pt-4 border-t border-gray-200">
-                            <h3 className="text-base font-medium mb-2">Was this estimate accurate?</h3>
-
-                            <div className="flex justify-center gap-4 mb-4">
-                              <Button
-                                type="button"
-                                variant={feedbackType === "positive" ? "default" : "outline"}
-                                size="sm"
-                                className={`w-[120px] h-[40px] flex items-center justify-center gap-1 ${
-                                  feedbackType === "positive" ? "bg-green-600 hover:bg-green-700" : ""
-                                }`}
-                                onClick={async () => {
-                                  if (!userEmail) {
-                                    toast({
-                                      title: "Email not found",
-                                      description:
-                                        "Your email is required to submit feedback. Please try registering again.",
-                                      variant: "destructive",
-                                    })
-                                    console.error("No email found for feedback submission")
-                                    return
-                                  }
-
-                                  setIsSubmittingFeedback(true)
-                                  try {
-                                    // Submit positive feedback immediately
-                                    const response = await fetch("/api/notion-feedback", {
-                                      method: "POST",
-                                      headers: {
-                                        "Content-Type": "application/json",
-                                      },
-                                      body: JSON.stringify({
-                                        email: userEmail,
-                                        estimateFeedback: "positive",
-                                        extraFeedback: extraFeedback.trim() || undefined,
-                                        salaryOutput: formatCurrency(calculatedSalary, currency), // Add the formatted salary
-                                      }),
-                                    })
-
-                                    const data = await response.json()
-
-                                    if (!data.success) {
-                                      throw new Error(data.error || "Failed to submit feedback")
-                                    }
-
-                                    setFeedbackType("positive")
-                                    toast({
-                                      title: "Feedback recorded",
-                                      description: "Your positive feedback has been saved.",
-                                    })
-                                    console.log("Positive feedback submitted successfully for email:", userEmail)
-                                  } catch (error) {
-                                    console.error("Error submitting feedback:", error)
-                                    toast({
-                                      title: "Error",
-                                      description: "There was a problem submitting your feedback. Please try again.",
-                                      variant: "destructive",
-                                    })
-                                  } finally {
-                                    setIsSubmittingFeedback(false)
-                                  }
-                                }}
-                                disabled={isSubmittingFeedback}
-                              >
-                                <ThumbsUp className="h-4 w-4" />
-                                <span>Yes</span>
-                              </Button>
-                              <Button
-                                type="button"
-                                variant={feedbackType === "negative" ? "default" : "outline"}
-                                size="sm"
-                                className={`w-[120px] h-[40px] flex items-center justify-center gap-1 ${
-                                  feedbackType === "negative" ? "bg-red-600 hover:bg-red-700" : ""
-                                }`}
-                                onClick={async () => {
-                                  if (!userEmail) {
-                                    toast({
-                                      title: "Email not found",
-                                      description:
-                                        "Your email is required to submit feedback. Please try registering again.",
-                                      variant: "destructive",
-                                    })
-                                    console.error("No email found for feedback submission")
-                                    return
-                                  }
-
-                                  setIsSubmittingFeedback(true)
-                                  try {
-                                    // Submit negative feedback immediately
-                                    const response = await fetch("/api/notion-feedback", {
-                                      method: "POST",
-                                      headers: {
-                                        "Content-Type": "application/json",
-                                      },
-                                      body: JSON.stringify({
-                                        email: userEmail,
-                                        estimateFeedback: "negative",
-                                        extraFeedback: extraFeedback.trim() || undefined,
-                                        salaryOutput: formatCurrency(calculatedSalary, currency), // Add the formatted salary
-                                      }),
-                                    })
-
-                                    const data = await response.json()
-
-                                    if (!data.success) {
-                                      throw new Error(data.error || "Failed to submit feedback")
-                                    }
-
-                                    setFeedbackType("negative")
-                                    toast({
-                                      title: "Feedback recorded",
-                                      description: "Your negative feedback has been saved.",
-                                    })
-                                    console.log("Negative feedback submitted successfully for email:", userEmail)
-                                  } catch (error) {
-                                    console.error("Error submitting feedback:", error)
-                                    toast({
-                                      title: "Error",
-                                      description: "There was a problem submitting your feedback. Please try again.",
-                                      variant: "destructive",
-                                    })
-                                  } finally {
-                                    setIsSubmittingFeedback(false)
-                                  }
-                                }}
-                                disabled={isSubmittingFeedback}
-                              >
-                                <ThumbsDown className="h-4 w-4" />
-                                <span>No</span>
-                              </Button>
-                            </div>
-
-                            {feedbackType && (
-                              <div className="space-y-3">
-                                <div>
-                                  <Label htmlFor="extraFeedback">Additional feedback (optional)</Label>
-                                  <Textarea
-                                    id="extraFeedback"
-                                    placeholder="Tell us more about your thoughts on this estimate..."
-                                    value={extraFeedback}
-                                    onChange={(e) => setExtraFeedback(e.target.value)}
-                                    className="mt-1"
-                                    rows={3}
-                                  />
-                                </div>
-                                <Button
-                                  type="button"
-                                  onClick={async () => {
-                                    if (!extraFeedback.trim()) {
-                                      toast({
-                                        title: "No additional feedback",
-                                        description: "Please enter some text or close this section.",
-                                      })
-                                      return
-                                    }
-
-                                    if (!userEmail) {
-                                      toast({
-                                        title: "Email not found",
-                                        description:
-                                          "Your email is required to submit feedback. Please try registering again.",
-                                        variant: "destructive",
-                                      })
-                                      console.error("No email found for feedback submission")
-                                      return
-                                    }
-
-                                    setIsSubmittingFeedback(true)
-                                    try {
-                                      // Submit additional feedback
-                                      const response = await fetch("/api/notion-feedback", {
-                                        method: "POST",
-                                        headers: {
-                                          "Content-Type": "application/json",
-                                        },
-                                        body: JSON.stringify({
-                                          email: userEmail,
-                                          estimateFeedback: feedbackType,
-                                          extraFeedback: extraFeedback.trim(),
-                                          salaryOutput: formatCurrency(calculatedSalary, currency), // Add the formatted salary
-                                        }),
-                                      })
-
-                                      const data = await response.json()
-
-                                      if (!data.success) {
-                                        throw new Error(data.error || "Failed to submit feedback")
-                                      }
-
-                                      setFeedbackSubmitted(true)
-                                      toast({
-                                        title: "Thank you for your feedback!",
-                                        description: "Your additional comments have been saved.",
-                                      })
-                                      console.log("Additional feedback submitted successfully for email:", userEmail)
-                                    } catch (error) {
-                                      console.error("Error submitting additional feedback:", error)
-                                      toast({
-                                        title: "Error",
-                                        description:
-                                          "There was a problem submitting your additional feedback. Please try again.",
-                                        variant: "destructive",
-                                      })
-                                    } finally {
-                                      setIsSubmittingFeedback(false)
-                                    }
-                                  }}
-                                  className="w-full flex items-center justify-center gap-1 bg-blue-600 hover:bg-blue-700"
-                                  disabled={isSubmittingFeedback}
-                                >
-                                  {isSubmittingFeedback ? (
-                                    "Submitting..."
-                                  ) : (
-                                    <>
-                                      <Send className="h-4 w-4" />
-                                      <span>Submit Additional Feedback</span>
-                                    </>
-                                  )}
-                                </Button>
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <div className="mt-4 pt-4 border-t border-gray-200 text-center">
-                            <div className="text-green-600 mb-2">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-12 w-12 mx-auto"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                              </svg>
-                            </div>
-                            <h3 className="text-lg font-medium mb-1">Thank you for your feedback!</h3>
-                            <p className="text-gray-600">Your input helps us improve our salary estimates.</p>
-                          </div>
-                        )}
                       </div>
                     ) : (
                       <div className="text-center py-4 text-gray-500">
@@ -1144,4 +731,3 @@ export default function BillingsCalculator() {
     </div>
   )
 }
-
