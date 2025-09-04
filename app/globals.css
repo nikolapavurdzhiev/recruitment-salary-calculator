@@ -1,94 +1,262 @@
+/* Fonts are loaded via Next.js font optimization in layout.tsx */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  :root {
+    /* Light mode colors */
+    --background: 0 0% 100%;
+    --foreground: 336 6% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 336 6% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 336 6% 15%;
+    --primary: 336 69% 70%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 336 20% 96%;
+    --secondary-foreground: 336 6% 15%;
+    --muted: 336 10% 94%;
+    --muted-foreground: 336 6% 45%;
+    --accent: 336 75% 58%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 336 10% 90%;
+    --input: 336 10% 90%;
+    --ring: 336 75% 58%;
+    --chart-1: 336 69% 70%;
+    --chart-2: 336 75% 58%;
+    --chart-3: 336 20% 96%;
+    --chart-4: 336 10% 94%;
+    --chart-5: 336 6% 15%;
+    --radius: 0.75rem;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 336 6% 15%;
+    --sidebar-primary: 336 69% 70%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 336 20% 96%;
+    --sidebar-accent-foreground: 336 6% 15%;
+    --sidebar-border: 336 10% 90%;
+    --sidebar-ring: 336 75% 58%;
+  }
+
+  .dark {
+    /* Dark mode colors */
+    --background: 336 6% 10%;
+    --foreground: 0 0% 98%;
+    --card: 336 6% 10%;
+    --card-foreground: 0 0% 98%;
+    --popover: 336 6% 10%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 336 69% 70%;
+    --primary-foreground: 336 6% 10%;
+    --secondary: 336 6% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 336 6% 15%;
+    --muted-foreground: 336 6% 65%;
+    --accent: 336 75% 58%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 336 6% 20%;
+    --input: 336 6% 20%;
+    --ring: 336 75% 58%;
+    --chart-1: 336 69% 70%;
+    --chart-2: 336 75% 58%;
+    --chart-3: 336 6% 15%;
+    --chart-4: 336 6% 20%;
+    --chart-5: 0 0% 98%;
+    --sidebar-background: 336 6% 10%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 336 69% 70%;
+    --sidebar-primary-foreground: 336 6% 10%;
+    --sidebar-accent: 336 6% 15%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 336 6% 20%;
+    --sidebar-ring: 336 75% 58%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-inter), system-ui, sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-poppins), system-ui, sans-serif;
+  }
+}
+
+@layer components {
+  /* Typography components */
+  .heading-1 {
+    @apply text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-foreground;
+  }
+
+  .heading-2 {
+    @apply text-3xl md:text-4xl lg:text-5xl font-heading font-bold text-foreground;
+  }
+
+  .heading-3 {
+    @apply text-2xl md:text-3xl lg:text-4xl font-heading font-semibold text-foreground;
+  }
+
+  .heading-4 {
+    @apply text-xl md:text-2xl lg:text-3xl font-heading font-semibold text-foreground;
+  }
+
+  .body-large {
+    @apply text-lg font-sans font-medium text-foreground;
+  }
+
+  .body-regular {
+    @apply text-base font-sans font-normal text-foreground;
+  }
+
+  .body-small {
+    @apply text-sm font-sans font-normal text-muted-foreground;
+  }
+
+  /* Card components */
+  .card-elevated {
+    @apply bg-card text-card-foreground rounded-lg shadow-soft border border-border;
+  }
+
+  .card-interactive {
+    @apply bg-card text-card-foreground rounded-lg shadow-soft border border-border transition-all duration-300 hover:shadow-medium hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+  }
+
+  /* Button components */
+  .btn-primary {
+    @apply bg-gradient-primary text-primary-foreground px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-gradient-primary-hover hover:shadow-glow focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-ghost {
+    @apply text-foreground px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Input components */
+  .input-field {
+    @apply w-full px-4 py-3 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all duration-300;
+  }
+
+  /* Animation utilities - using direct classes instead of @apply to avoid circular dependencies */
+  .animate-fade-in-up {
+    animation: fade-in-up 0.8s ease-out;
+  }
+
+  .animate-fade-in-down {
+    animation: fade-in-down 0.8s ease-out;
+  }
+
+  .animate-slide-in-right {
+    animation: slide-in-right 0.8s ease-out;
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-gradient-shift {
+    animation: gradient-shift 8s ease-in-out infinite;
+  }
+
+  .animate-gentle-bounce {
+    animation: gentle-bounce 2s infinite;
+  }
+
+  /* Staggered animations */
+  .stagger-container > * {
+    animation: fade-in-up 0.8s ease-out;
+  }
+
+  .stagger-container > *:nth-child(1) { animation-delay: 0.1s; }
+  .stagger-container > *:nth-child(2) { animation-delay: 0.2s; }
+  .stagger-container > *:nth-child(3) { animation-delay: 0.3s; }
+  .stagger-container > *:nth-child(4) { animation-delay: 0.4s; }
+  .stagger-container > *:nth-child(5) { animation-delay: 0.5s; }
+  .stagger-container > *:nth-child(6) { animation-delay: 0.6s; }
+  .stagger-container > *:nth-child(7) { animation-delay: 0.7s; }
+  .stagger-container > *:nth-child(8) { animation-delay: 0.8s; }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
-}
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+  .text-gradient {
+    background: linear-gradient(135deg, #FF6B9D 0%, #DE8DB4 25%, #E54588 50%, #C73A7A 75%, #A91B5A 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+    color: #E54588; /* Fallback color for browsers that don't support background-clip: text */
+    display: inline-block;
+    font-weight: 700;
+    position: relative;
   }
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+  
+  /* Ensure the gradient is visible */
+  .text-gradient::selection {
+    background: transparent;
   }
-}
+  
+  /* Fallback for older browsers */
+  @supports not (background-clip: text) {
+    .text-gradient {
+      background: none;
+      color: #E54588;
+    }
+  }
 
-@layer base {
-  * {
-    @apply border-border;
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, #FF6B9D 0%, #DE8DB4 25%, #E54588 50%, #C73A7A 75%, #A91B5A 100%);
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
   }
-  body {
-    @apply bg-background text-foreground;
+
+  .bg-gradient-primary-hover {
+    background: linear-gradient(135deg, #FF5A8A 0%, #D17BA3 25%, #D63D7A 50%, #B8326A 75%, #9A1A4A 100%);
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+  }
+
+  /* Focus states for accessibility */
+  .focus-visible {
+    @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .high-contrast {
+      @apply border-2 border-foreground;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in-up,
+    .animate-fade-in-down,
+    .animate-slide-in-right,
+    .animate-float,
+    .animate-gradient-shift,
+    .animate-gentle-bounce {
+      animation: none;
+    }
   }
 }

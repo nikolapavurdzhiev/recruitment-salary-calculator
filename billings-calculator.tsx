@@ -332,30 +332,32 @@ export default function BillingsCalculator() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      <main className="flex-1 py-6 md:py-8">
+    <div className="flex flex-col min-h-screen bg-background">
+      <main className="flex-1 py-8 md:py-12">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="max-w-6xl mx-auto">
-            <div className="mb-6 text-center">
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Recruitment Salary Calculator</h1>
-              <p className="text-gray-600 max-w-2xl mx-auto text-sm md:text-base">
-                Estimate your base salary as an agency recruiter based on market data.
+          <div className="max-w-7xl mx-auto">
+            <div className="mb-12 text-center">
+              <h1 className="heading-1 text-gradient animate-fade-in-up">
+                Recruitment Salary Calculator
+              </h1>
+              <p className="body-large text-muted-foreground max-w-3xl mx-auto mt-6 animate-fade-in-up stagger-1">
+                Estimate your base salary as an agency recruiter based on comprehensive market data and industry insights.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
-                <Card className="h-full">
-                  <CardContent className="pt-5">
-                    <form className="space-y-5">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card className="card-elevated h-full animate-fade-in-up stagger-2">
+                  <CardContent className="pt-8 pb-8 px-8">
+                    <form className="space-y-8">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Region field */}
-                        <div className="space-y-2">
-                          <Label htmlFor="country">
-                            Region <span className="text-red-500">*</span>
+                        <div className="space-y-3">
+                          <Label htmlFor="country" className="body-small font-medium text-foreground">
+                            Region <span className="text-destructive">*</span>
                           </Label>
                           <Select value={formData.country} onValueChange={(value) => handleChange("country", value)}>
-                            <SelectTrigger id="country" className={formErrors.country ? "border-red-500" : ""}>
+                            <SelectTrigger id="country" className={`input-field h-12 ${formErrors.country ? "border-destructive" : ""}`}>
                               <SelectValue placeholder="Select region" />
                             </SelectTrigger>
                             <SelectContent>
@@ -366,16 +368,16 @@ export default function BillingsCalculator() {
                               ))}
                             </SelectContent>
                           </Select>
-                          {formErrors.country && <p className="text-red-500 text-sm mt-1">{formErrors.country}</p>}
+                          {formErrors.country && <p className="text-destructive body-small mt-1">{formErrors.country}</p>}
                         </div>
 
                         {/* Role field */}
-                        <div className="space-y-2">
-                          <Label htmlFor="role">
-                            Role <span className="text-red-500">*</span>
+                        <div className="space-y-3">
+                          <Label htmlFor="role" className="body-small font-medium text-foreground">
+                            Role <span className="text-destructive">*</span>
                           </Label>
                           <Select value={formData.role} onValueChange={(value) => handleChange("role", value)}>
-                            <SelectTrigger id="role" className={formErrors.role ? "border-red-500" : ""}>
+                            <SelectTrigger id="role" className={`input-field h-12 ${formErrors.role ? "border-destructive" : ""}`}>
                               <SelectValue placeholder="Select role" />
                             </SelectTrigger>
                             <SelectContent>
@@ -386,26 +388,26 @@ export default function BillingsCalculator() {
                               ))}
                             </SelectContent>
                           </Select>
-                          {formErrors.role && <p className="text-red-500 text-sm mt-1">{formErrors.role}</p>}
+                          {formErrors.role && <p className="text-destructive body-small mt-1">{formErrors.role}</p>}
                         </div>
                       </div>
 
                       {/* Years of Experience field - hide for Trainee Recruiters */}
                       {formData.role !== "Trainee Recruiter" && (
-                        <div className="space-y-2">
-                          <div className="flex items-center mb-1">
-                            <Label htmlFor="yearsOfExperience" className="mr-2">
-                              Years of Experience <span className="text-red-500">*</span>
+                        <div className="space-y-3">
+                          <div className="flex items-center mb-2">
+                            <Label htmlFor="yearsOfExperience" className="mr-2 body-small font-medium text-foreground">
+                              Years of Experience <span className="text-destructive">*</span>
                             </Label>
                             <div className="relative group">
-                              <Info className="h-4 w-4 text-gray-500 cursor-help" />
-                              <div className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-gray-800 text-white text-sm rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50">
+                              <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                              <div className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-popover text-popover-foreground body-small rounded-md shadow-lg border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50">
                                 <p>
                                   Experience is scaled based on role expectations (0-20 years). Entry-level roles with 0
                                   years receive a minimum adjustment, and senior roles with 20+ years may see a slight
                                   premium.
                                 </p>
-                                <div className="absolute left-0 top-full w-3 h-3 -mt-1 ml-1 transform rotate-45 bg-gray-800"></div>
+                                <div className="absolute left-0 top-full w-3 h-3 -mt-1 ml-1 transform rotate-45 bg-popover"></div>
                               </div>
                             </div>
                           </div>
@@ -417,13 +419,13 @@ export default function BillingsCalculator() {
                             placeholder="e.g. 5"
                             value={formData.yearsOfExperience}
                             onChange={(e) => handleChange("yearsOfExperience", e.target.value)}
-                            className={formErrors.yearsOfExperience ? "border-red-500" : ""}
+                            className={`input-field h-12 ${formErrors.yearsOfExperience ? "border-destructive" : ""}`}
                           />
                           {formErrors.yearsOfExperience && (
-                            <p className="text-red-500 text-sm mt-1">{formErrors.yearsOfExperience}</p>
+                            <p className="text-destructive body-small mt-1">{formErrors.yearsOfExperience}</p>
                           )}
                           {formWarnings.yearsOfExperience && (
-                            <div className="flex items-center text-amber-600 text-sm mt-1">
+                            <div className="flex items-center text-amber-500 body-small mt-1">
                               <AlertCircle className="h-4 w-4 mr-1" />
                               {formWarnings.yearsOfExperience}
                             </div>
@@ -433,12 +435,12 @@ export default function BillingsCalculator() {
 
                       {/* Sector Focus field - hide for Trainee Recruiters */}
                       {formData.role !== "Trainee Recruiter" && (
-                        <div className="space-y-2">
-                          <Label htmlFor="sector">
-                            Sector Focus <span className="text-red-500">*</span>
+                        <div className="space-y-3">
+                          <Label htmlFor="sector" className="body-small font-medium text-foreground">
+                            Sector Focus <span className="text-destructive">*</span>
                           </Label>
                           <Select value={formData.sector} onValueChange={(value) => handleChange("sector", value)}>
-                            <SelectTrigger id="sector" className={formErrors.sector ? "border-red-500" : ""}>
+                            <SelectTrigger id="sector" className={`input-field h-12 ${formErrors.sector ? "border-destructive" : ""}`}>
                               <SelectValue placeholder="Select sector" />
                             </SelectTrigger>
                             <SelectContent>
@@ -449,53 +451,53 @@ export default function BillingsCalculator() {
                               ))}
                             </SelectContent>
                           </Select>
-                          {formErrors.sector && <p className="text-red-500 text-sm mt-1">{formErrors.sector}</p>}
+                          {formErrors.sector && <p className="text-destructive body-small mt-1">{formErrors.sector}</p>}
                         </div>
                       )}
 
                       {/* Has Clients Checkbox - hide for Trainee Recruiters */}
                       {formData.role !== "Trainee Recruiter" && (
-                        <div className="space-y-2">
-                          <div className="flex items-start space-x-2">
+                        <div className="space-y-3">
+                          <div className="flex items-start space-x-3">
                             <Checkbox
                               id="hasClients"
                               checked={formData.hasClients}
                               onCheckedChange={(checked) => handleChange("hasClients", checked === true)}
-                              className={`${formErrors.hasClients ? "border-red-500" : ""} mt-1`}
+                              className={`${formErrors.hasClients ? "border-destructive" : "border-input"} mt-1`}
                             />
                             <div className="flex items-center">
-                              <Label htmlFor="hasClients" className="mr-2 text-sm">
-                                Has a Book of Clients? <span className="text-red-500">*</span>
+                              <Label htmlFor="hasClients" className="mr-2 body-small font-medium text-foreground">
+                                Has a Book of Clients? <span className="text-destructive">*</span>
                               </Label>
                               <div className="relative group">
-                                <Info className="h-4 w-4 text-gray-500 cursor-help" />
-                                <div className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-gray-800 text-white text-sm rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50">
+                                <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                                <div className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-popover text-popover-foreground body-small rounded-md shadow-lg border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50">
                                   <p>
                                     Recruiters with an existing book of clients typically command higher base salaries
                                     due to their established network and immediate revenue potential.
                                   </p>
-                                  <div className="absolute left-0 top-full w-3 h-3 -mt-1 ml-1 transform rotate-45 bg-gray-800"></div>
+                                  <div className="absolute left-0 top-full w-3 h-3 -mt-1 ml-1 transform rotate-45 bg-popover"></div>
                                 </div>
                               </div>
                             </div>
                           </div>
                           {formErrors.hasClients && (
-                            <p className="text-red-500 text-sm mt-1">{formErrors.hasClients}</p>
+                            <p className="text-destructive body-small mt-1">{formErrors.hasClients}</p>
                           )}
                         </div>
                       )}
 
                       {/* Skill Match section - hide for Trainee Recruiters */}
                       {formData.role !== "Trainee Recruiter" && (
-                        <div className="space-y-4">
+                        <div className="space-y-6">
                           <div>
                             <div className="flex items-center mb-6">
-                              <Label htmlFor="specializationFit" className="block mr-2">
-                                Skill Match <span className="text-red-500">*</span>
+                              <Label htmlFor="specializationFit" className="block mr-2 body-small font-medium text-foreground">
+                                Skill Match <span className="text-destructive">*</span>
                               </Label>
                               <div className="relative group">
-                                <Info className="h-4 w-4 text-gray-500 cursor-help" />
-                                <div className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-gray-800 text-white text-sm rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50">
+                                <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                                <div className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-popover text-popover-foreground body-small rounded-md shadow-lg border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50">
                                   <p>
                                     Please rate your expertise in this field on a scale of 1 (novice) to 5 (expert). For
                                     entry-level positions, a higher rating will give a small boost to your estimated
@@ -503,7 +505,7 @@ export default function BillingsCalculator() {
                                     estimate. If you work in a high-demand area like Tech or Finance, your expertise is
                                     even more valuable and will further raise your estimate.
                                   </p>
-                                  <div className="absolute left-0 top-full w-3 h-3 -mt-1 ml-1 transform rotate-45 bg-gray-800"></div>
+                                  <div className="absolute left-0 top-full w-3 h-3 -mt-1 ml-1 transform rotate-45 bg-popover"></div>
                                 </div>
                               </div>
                             </div>
@@ -517,13 +519,13 @@ export default function BillingsCalculator() {
                                 onValueChange={(value) => handleChange("specializationFit", value[0])}
                                 className="my-6"
                               />
-                              <div className="flex justify-between text-sm text-gray-500 mt-1">
+                              <div className="flex justify-between body-small text-muted-foreground mt-1">
                                 <span>Low fit (1)</span>
                                 <span className="text-center">Neutral fit (3)</span>
                                 <span>Perfect fit (5)</span>
                               </div>
                               <div className="text-center mt-4">
-                                <span className="font-medium">
+                                <span className="body-small font-medium text-foreground">
                                   Selected: {formData.specializationFit}
                                   {formData.specializationFit === 1 && " (Low)"}
                                   {formData.specializationFit === 2 && " (Below Average)"}
@@ -539,20 +541,20 @@ export default function BillingsCalculator() {
 
                       {/* Optional metrics section - hide for Trainee Recruiters */}
                       {formData.role !== "Trainee Recruiter" && (
-                        <div className="space-y-4 pt-2 border-t border-gray-100">
+                        <div className="space-y-6 pt-6 border-t border-border">
                           <div className="flex items-center">
-                            <Label className="block mr-2">
+                            <Label className="block mr-2 body-small font-medium text-foreground">
                               Please select the metric you want to report based on your performance in the last 12
                               months:
                             </Label>
                             <div className="relative group">
-                              <Info className="h-4 w-4 text-gray-500 cursor-help" />
-                              <div className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-gray-800 text-white text-sm rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50">
+                              <Info className="h-4 w-4 text-muted-foreground cursor-help" />
+                              <div className="absolute left-0 bottom-full mb-2 w-72 p-3 bg-popover text-popover-foreground body-small rounded-md shadow-lg border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-200 z-50">
                                 <p>
                                   Enter the actual numbers from the last 12 months. Using historical data provides more
                                   objective and reliable figures for salary estimates.
                                 </p>
-                                <div className="absolute left-0 top-full w-3 h-3 -mt-1 ml-1 transform rotate-45 bg-gray-800"></div>
+                                <div className="absolute left-0 top-full w-3 h-3 -mt-1 ml-1 transform rotate-45 bg-popover"></div>
                               </div>
                             </div>
                           </div>
@@ -563,18 +565,18 @@ export default function BillingsCalculator() {
                             className="flex space-x-4"
                           >
                             <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="placements" id="placements" />
-                              <Label htmlFor="placements">Number of Placements Made in the Last 12 Months</Label>
+                              <RadioGroupItem value="placements" id="placements" className="border-input" />
+                              <Label htmlFor="placements" className="text-foreground">Number of Placements Made in the Last 12 Months</Label>
                             </div>
                             <div className="flex items-center space-x-2">
-                              <RadioGroupItem value="billings" id="billings" />
-                              <Label htmlFor="billings">Total Billings in the Last 12 Months</Label>
+                              <RadioGroupItem value="billings" id="billings" className="border-input" />
+                              <Label htmlFor="billings" className="text-foreground">Total Billings in the Last 12 Months</Label>
                             </div>
                           </RadioGroup>
 
                           {formData.metricType === "placements" ? (
-                            <div className="space-y-2">
-                              <Label htmlFor="annualPlacements">Number of Placements Made in the Last 12 Months</Label>
+                            <div className="space-y-3">
+                              <Label htmlFor="annualPlacements" className="body-small font-medium text-foreground">Number of Placements Made in the Last 12 Months</Label>
                               <Input
                                 id="annualPlacements"
                                 type="number"
@@ -582,18 +584,19 @@ export default function BillingsCalculator() {
                                 placeholder="e.g. 8"
                                 value={formData.annualPlacements}
                                 onChange={(e) => handleChange("annualPlacements", e.target.value)}
+                                className="input-field h-12"
                               />
                             </div>
                           ) : (
-                            <div className="space-y-2">
-                              <Label htmlFor="annualBillings">Total Billings in the Last 12 Months</Label>
-                              <div className="grid grid-cols-3 gap-2">
+                            <div className="space-y-3">
+                              <Label htmlFor="annualBillings" className="body-small font-medium text-foreground">Total Billings in the Last 12 Months</Label>
+                              <div className="grid grid-cols-3 gap-3">
                                 <div className="col-span-1">
                                   <Select
                                     value={formData.billingsCurrency}
                                     onValueChange={(value) => handleChange("billingsCurrency", value)}
                                   >
-                                    <SelectTrigger id="billingsCurrency">
+                                    <SelectTrigger id="billingsCurrency" className="input-field h-12">
                                       <SelectValue placeholder="Currency" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -613,6 +616,7 @@ export default function BillingsCalculator() {
                                     placeholder="e.g. 150000"
                                     value={formData.annualBillings}
                                     onChange={(e) => handleChange("annualBillings", e.target.value)}
+                                    className="input-field h-12"
                                   />
                                 </div>
                               </div>
@@ -623,14 +627,14 @@ export default function BillingsCalculator() {
 
                       {/* Trainee Recruiter Note */}
                       {formData.role === "Trainee Recruiter" && (
-                        <div className="mt-4 p-4 bg-blue-50 rounded-md text-blue-800 border border-blue-200">
-                          <p className="font-medium mb-2">Trainee Recruiter Information:</p>
-                          <p>
+                        <div className="mt-6 p-6 bg-accent/10 rounded-xl text-accent-foreground border border-accent/30 backdrop-blur-sm">
+                          <p className="body-small font-semibold mb-3 text-accent">Trainee Recruiter Information:</p>
+                          <p className="body-small text-accent-foreground">
                             Trainee Recruiters are assigned the regional minimum salary based on the selected region.
                           </p>
-                          <p className="mt-2">No additional criteria are required for this role.</p>
+                          <p className="mt-2 body-small text-accent-foreground">No additional criteria are required for this role.</p>
                           {formData.country && (
-                            <p className="mt-2 font-medium">
+                            <p className="mt-3 body-small font-semibold text-accent">
                               Minimum salary for Trainee Recruiters in {formData.country}:
                               {formData.country && salaryData[formData.country as keyof typeof salaryData]
                                 ? ` ${salaryData[formData.country as keyof typeof salaryData]["Trainee Recruiter"].currency}${salaryData[formData.country as keyof typeof salaryData]["Trainee Recruiter"].min.toLocaleString()}`
@@ -643,7 +647,7 @@ export default function BillingsCalculator() {
                       <Button
                         type="button"
                         onClick={calculateSalary}
-                        className="w-full bg-blue-600 hover:bg-blue-700"
+                        className="btn-primary w-full h-14 text-lg"
                         disabled={isCalculating}
                       >
                         {isCalculating ? "Calculating..." : "Calculate Base Salary"}
@@ -654,47 +658,47 @@ export default function BillingsCalculator() {
               </div>
 
               <div>
-                <Card className="h-full">
-                  <CardContent className="pt-5">
-                    <h2 className="text-xl font-semibold mb-4">Estimated Base Salary</h2>
+                <Card className="card-elevated h-full animate-fade-in-up stagger-3">
+                  <CardContent className="pt-8 pb-8 px-8">
+                    <h2 className="heading-3 mb-6 text-foreground">Estimated Base Salary</h2>
 
                     {calculatedSalary !== null ? (
-                      <div className="text-center py-4">
-                        <div className="text-2xl md:text-3xl lg:text-4xl font-bold text-blue-600 mb-2 whitespace-nowrap text-ellipsis max-w-full">
+                      <div className="text-center py-6">
+                        <div className="heading-1 text-gradient mb-3 whitespace-nowrap text-ellipsis max-w-full">
                           {formatCurrency(calculatedSalary, currency)}
                         </div>
-                        <p className="text-gray-500 text-sm">Estimated annual base salary</p>
+                        <p className="body-small text-muted-foreground">Estimated annual base salary</p>
                       </div>
                     ) : (
-                      <div className="text-center py-4 text-gray-500">
-                        <div className="text-2xl md:text-4xl font-bold text-gray-300 mb-2">—</div>
-                        <p className="text-gray-500 text-sm">
+                      <div className="text-center py-6 text-muted-foreground">
+                        <div className="heading-1 text-muted-foreground mb-3">—</div>
+                        <p className="body-small text-muted-foreground">
                           Fill out the form and click "Calculate" to see your estimated base salary.
                         </p>
                       </div>
                     )}
 
-                    <div className="mt-4 text-sm text-gray-600 bg-gray-50 p-3 rounded-md">
-                      <p className="font-medium mb-1">Note:</p>
-                      <p>
+                    <div className="mt-6 body-small text-muted-foreground bg-muted/50 p-6 rounded-xl border border-border backdrop-blur-sm">
+                      <p className="body-small font-semibold mb-2 text-foreground">Note:</p>
+                      <p className="body-small text-muted-foreground">
                         Base salary is primarily based on role, experience, and location, with adjustments for
                         specialization, performance, and client book. Recruiters with existing clients or in high-demand
                         sectors typically earn higher total compensation once commissions and bonuses are considered.
                       </p>
 
-                      <div className="border-t border-gray-200 mt-3 pt-3">
-                        <p className="font-medium mb-1">Disclaimer:</p>
-                        <p>
+                      <div className="border-t border-border mt-4 pt-4">
+                        <p className="body-small font-semibold mb-2 text-foreground">Disclaimer:</p>
+                        <p className="body-small text-muted-foreground">
                           This calculator is currently optimized for the UK, USA, Dubai, Amsterdam, Australia,
                           Singapore, and Hong Kong. It estimates base salaries only – commissions and bonuses are not
                           included.
                         </p>
-                        <p className="mt-2">
+                        <p className="mt-2 body-small text-muted-foreground">
                           Please note: Salaries may vary depending on company size, budget, internal salary bands, team
                           structure, culture fit, individual negotiation, and market timing. These estimates serve as a
                           general guide and should not be treated as guaranteed offers.
                         </p>
-                        <p className="mt-2">More regions will be supported soon.</p>
+                        <p className="mt-2 body-small text-muted-foreground font-medium">More regions will be supported soon.</p>
                       </div>
                     </div>
                   </CardContent>
@@ -705,10 +709,10 @@ export default function BillingsCalculator() {
         </div>
       </main>
 
-      <footer className="border-t border-gray-100 py-4 mt-6">
-        <div className="container mx-auto px-4 md:px-6 text-center text-gray-500 text-sm">
-          <p>© {new Date().getFullYear()} Recruitment Salary Calculator. All rights reserved.</p>
-          <p className="mt-1">Data sourced from market research and industry standards.</p>
+      <footer className="border-t border-border py-8 mt-12 bg-muted/50 backdrop-blur-sm">
+        <div className="container mx-auto px-4 md:px-6 text-center text-muted-foreground body-small">
+          <p className="font-medium">© {new Date().getFullYear()} Recruitment Salary Calculator. All rights reserved.</p>
+          <p className="mt-2">Data sourced from market research and industry standards.</p>
         </div>
       </footer>
     </div>
