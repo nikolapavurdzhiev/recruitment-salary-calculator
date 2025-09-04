@@ -53,8 +53,9 @@ recruitment-salary-calculator/
 │   └── navigation.tsx    # Navigation component
 ├── lib/                  # Utility functions
 ├── public/               # Static assets
-├── billings-calculator.tsx # Main calculator component (root level)
-└── styles/              # Global styles
+├── app/                  # Next.js App Router
+│   └── globals.css       # Global styles
+└── billings-calculator.tsx # Main calculator component (root level)
 ```
 
 ## Features

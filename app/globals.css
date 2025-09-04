@@ -5,6 +5,36 @@
 @tailwind utilities;
 
 @layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .force-full-width {
+    width: 100vw !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .force-full-width * {
+    max-width: none !important;
+  }
+  
+  /* Mobile layout fix - only target the right side spacing issue */
+  @media (max-width: 768px) {
+    .mobile-full-width {
+      width: 100vw !important;
+      max-width: none !important;
+    }
+  }
+  
   :root {
     /* Light mode colors */
     --background: 0 0% 100%;

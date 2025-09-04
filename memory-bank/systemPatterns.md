@@ -117,3 +117,56 @@
 - **Pattern**: TypeScript for compile-time error checking
 - **Implementation**: Strict type definitions and interfaces
 - **Benefits**: Fewer runtime errors, better code quality
+
+## URL Structure and Routing
+
+### 1. Root URL Access
+- **Pattern**: Direct access at domain root for better UX
+- **Implementation**: Calculator component at `app/page.tsx`
+- **Benefits**: Clean URLs, professional appearance, easier sharing
+
+### 2. Static Generation
+- **Pattern**: Pre-rendered content for optimal performance
+- **Implementation**: Next.js static generation
+- **Benefits**: Fast loading, better SEO, reduced server load
+
+## Asset Management
+
+### 1. Favicon System
+- **Pattern**: Consistent branding across all browsers
+- **Implementation**: Multiple favicon formats (SVG, ICO) with proper HTML references
+- **Benefits**: Professional appearance, brand consistency
+
+### 2. Static Assets
+- **Pattern**: Optimized asset delivery
+- **Implementation**: Public directory with proper file organization
+- **Benefits**: Fast loading, proper caching
+
+## Build and Development
+
+### 1. Development Server
+- **Pattern**: Stable development environment
+- **Implementation**: Proper cache management and dependency handling
+- **Benefits**: Reliable development experience, faster iteration
+
+### 2. Production Build
+- **Pattern**: Optimized production bundle
+- **Implementation**: Next.js build optimization with webpack
+- **Benefits**: Fast loading, small bundle size, production-ready code
+
+## Maintenance Patterns
+
+### 1. Documentation
+- **Pattern**: Comprehensive project documentation
+- **Implementation**: README, memory bank, inline comments
+- **Benefits**: Easy onboarding, knowledge preservation
+
+### 2. Code Organization
+- **Pattern**: Clean, maintainable code structure
+- **Implementation**: Logical file organization, consistent naming
+- **Benefits**: Easy maintenance, team collaboration
+
+### 3. Error Monitoring
+- **Pattern**: Proactive issue detection and resolution
+- **Implementation**: Build validation, type checking, linting
+- **Benefits**: Stable application, better user experience
