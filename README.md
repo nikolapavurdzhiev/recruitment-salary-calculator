@@ -136,5 +136,3 @@ MIT License. See the `LICENSE` file for more information.
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 
 ---
-
-© 2025 Recruitica. All rights reserved.
