@@ -32,10 +32,11 @@
 ## Component Architecture
 
 ### 1. Calculator Component
-- **Location**: `billings-calculator.tsx`
+- **Location**: `billings-calculator.tsx` (root level)
 - **Purpose**: Main salary calculation interface
 - **Pattern**: Client component with state management
 - **Dependencies**: UI components, calculation logic
+- **Integration**: Directly imported into root page (`app/page.tsx`)
 
 ### 2. UI Components
 - **Location**: `components/ui/`

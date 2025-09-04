@@ -44,15 +44,16 @@ recruitment-salary-calculator/
 │   │   ├── notion-check/  # Check if user exists
 │   │   ├── notion-create/ # Create new user
 │   │   └── notion-feedback/ # Submit feedback
-│   ├── landing/           # Landing page
-│   ├── registration-form/ # User registration
-│   └── billings-calculator/ # Main calculator
+│   ├── landing/           # Landing page (removed)
+│   ├── registration-form/ # User registration (removed)
+│   └── page.tsx          # Main calculator (root page)
 ├── components/            # React components
 │   ├── ui/               # shadcn/ui components
 │   ├── multi-select.tsx  # Custom multi-select
 │   └── navigation.tsx    # Navigation component
 ├── lib/                  # Utility functions
 ├── public/               # Static assets
+├── billings-calculator.tsx # Main calculator component (root level)
 └── styles/              # Global styles
 ```
 

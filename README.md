@@ -2,6 +2,8 @@
 
 A modern, streamlined salary calculator for tech recruitment professionals. Built with Next.js 15, React 19, TypeScript, and Tailwind CSS.
 
+🌐 **Live Demo**: [https://calculator.npav.dev/](https://calculator.npav.dev/)
+
 ---
 
 ## 🚀 Quick Start

@@ -1,7 +1,11 @@
-import { redirect } from "next/navigation"
+import { Suspense } from "react"
+import BillingsCalculator from "../billings-calculator"
 
 export default function Home() {
-  // Redirect directly to the calculator
-  redirect("/billings-calculator")
+  return (
+    <Suspense fallback={<div className="flex justify-center items-center min-h-screen">Loading...</div>}>
+      <BillingsCalculator />
+    </Suspense>
+  )
 }
 
